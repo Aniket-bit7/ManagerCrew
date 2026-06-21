@@ -1,52 +1,33 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
-from uuid import UUID
-from datetime import datetime
+from typing import List, Optional
 
-# ==========================================
-# 1. Input Schemas (From Jira/RAG)
-# ==========================================
+class RawSubTask(BaseModel):
+    title: str = Field(..., description="Action-oriented title of the subtask")
+    description: str = Field(..., description="Detailed engineering requirements")
+    acceptance_criteria: List[str] = Field(..., description="Concrete verification checklist items")
+    # 3-point estimation (Working Days)
+    optimistic_days: float = Field(..., description="O: Best case scenario")
+    most_likely_days: float = Field(..., description="M: Most probable duration")
+    pessimistic_days: float = Field(..., description="P: Worst case scenario")
+    depends_on_titles: List[str] = Field(default_factory=list, description="Titles of other subtasks this depends on")
 
-class JiraTicket(BaseModel):
-    ticket_id: str = Field(..., description="Jira ticket key, e.g., PROJ-123")
-    summary: str
-    description: Optional[str] = ""
-    blocks: List[str] = Field(default_factory=list, description="List of ticket IDs this ticket blocks")
-    story_points: Optional[float] = None
+class RawFeature(BaseModel):
+    feature_name: str
+    subtasks: List[RawSubTask]
 
-# ==========================================
-# 2. Intermediate Computational Schemas
-# ==========================================
+class PRDParsedPayload(BaseModel):
+    features: List[RawFeature]
 
-class TaskNode(BaseModel):
-    ticket_id: str
-    moscow_tier: str  # Must, Should, Could, Won't
-    depends_on: List[str] = Field(default_factory=list)
-    
-    # PERT Metrics
-    optimistic_days: float = 0.0
-    most_likely_days: float = 0.0
-    pessimistic_days: float = 0.0
-    expected_duration: float = 0.0  # E = (O + 4M + P) / 6
-    variance: float = 0.0           # σ² = ((P - O) / 6)²
-
-    # CPM Metrics (Computed via Forward/Backward Pass)
-    es: float = 0.0  # Early Start
-    ef: float = 0.0  # Early Finish
-    ls: float = 0.0  # Late Start
-    lf: float = 0.0  # Late Finish
-    float_time: float = 0.0  # LF - EF or LS - ES
-
-# ==========================================
-# 3. Output Payload Schema
-# ==========================================
-
-class SprintPlan(BaseModel):
-    plan_id: UUID
-    timestamp: datetime
-    ordered_tasks: List[TaskNode] = Field(..., description="Topologically sorted execution order")
-    critical_path: List[str] = Field(..., description="Ticket IDs where float == 0")
-    sprint_confidence: float = Field(..., description="P(on-time delivery) via normal CDF approximation")
-    total_expected_days: float = Field(..., description="Sum of expected durations along the critical path")
-    moscow_summary: Dict[str, List[str]] = Field(..., description="Tickets grouped by MoSCoW tier")
-    policy_attestation: str = Field(..., description="HMAC-SHA256 signature of the payload")
+# Final Schema after Enrichment
+class EnrichedSubTask(BaseModel):
+    id: str
+    feature_name: str
+    title: str
+    description: str
+    acceptance_criteria: List[str]
+    team_label: str  # FRONTEND, BACKEND, DEVOPS, QA, ARCHITECTURE
+    moscow_tier: str  # MUST, SHOULD, COULD, WON'T
+    o: float
+    m: float
+    p: float
+    depends_on_ids: List[str] = Field(default_factory=list)

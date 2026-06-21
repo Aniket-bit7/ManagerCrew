@@ -1,0 +1,22 @@
+wip_limit: 2
+sprint_duration_days: 20
+jira_project_key: "ENG"
+confidence_threshold: 0.60
+
+teams:
+  - name: "FRONTEND"
+    slack_channel: "#frontend-team"
+    engineers:
+      - name: "Alice"
+        jira_account_id: "jira-id-alice-123"
+        slack_user_id: "U1234567A"
+      - name: "Bob"
+        jira_account_id: "jira-id-bob-456"
+        slack_user_id: "U1234567B"
+
+  - name: "BACKEND"
+    slack_channel: "#backend-team"
+    engineers:
+      - name: "Charlie"
+        jira_account_id: "jira-id-charlie-789"
+        slack_user_id: "U1234567C"
