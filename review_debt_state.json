@@ -1,0 +1,43 @@
+{
+  "reviewer_stats": {
+    "Ayush Mittal": {
+      "pending": 1,
+      "completed": 0,
+      "avg_response_hours": 2.0
+    }
+  },
+  "bottlenecks": {
+    "frontend/src/": 1
+  },
+  "cross_agent_logs": [
+    {
+      "timestamp": "2026-06-21 18:39:27",
+      "sender": "Review Agent",
+      "receiver": "Risk Agent",
+      "topic": "PR Rejected",
+      "content": "PR #6 rejected and closed due to quality audit failure."
+    },
+    {
+      "timestamp": "2026-06-21 18:39:01",
+      "sender": "Review Agent",
+      "receiver": "Team Lead",
+      "topic": "Manual Review Escalation",
+      "content": "PR #6 ('feat: add inline task editing with save and cancel actions') escalated to team lead (Slack: U_TEST_LEAD_123) for human review. 0 issue(s) found."
+    },
+    {
+      "timestamp": "2026-06-21 18:38:58",
+      "sender": "Review Agent",
+      "receiver": "Execution Agent",
+      "topic": "Jira Transition Signal",
+      "content": "PR #6 reviewed. Recommendation: MANUAL_REVIEW. Awaiting Execution Agent to transition Jira issue status accordingly."
+    },
+    {
+      "timestamp": "2026-06-21 18:38:58",
+      "sender": "Review Agent",
+      "receiver": "Communication Agent",
+      "topic": "PR Audit Payload",
+      "content": "PR #6 audit complete. Complexity: 6/10, Security: LOW, Recommendation: MANUAL_REVIEW. Full payload available."
+    }
+  ],
+  "pending_reviews": {}
+}

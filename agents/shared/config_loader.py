@@ -7,11 +7,14 @@ class Engineer(BaseModel):
     name: str
     jira_account_id: str
     slack_user_id: str
+    github_username: str = ""
+    is_team_lead: bool = False  # If True, this engineer receives MANUAL_REVIEW escalations
 
 class Team(BaseModel):
     name: str
     slack_channel: str
     engineers: List[Engineer]
+    team_lead_slack_id: str = ""  # Direct Slack user ID for the team lead escalations
 
 class AppConfig(BaseModel):
     wip_limit: int = Field(default=2)
