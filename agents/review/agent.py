@@ -218,7 +218,17 @@ class ReviewAgent:
         team_map = self.config.get_team_mapping()
         target_team = team_map.get(target_team_name.upper())
         if not target_team:
-            target_team = self.config.teams[0]
+            if self.config.teams:
+                target_team = self.config.teams[0]
+            else:
+                dummy_engineer = Engineer(
+                    name="Unassigned",
+                    jira_account_id="",
+                    slack_user_id="",
+                    github_username="",
+                    is_team_lead=False
+                )
+                return dummy_engineer, "No teams configured", {}
             
         engineers = target_team.engineers
         

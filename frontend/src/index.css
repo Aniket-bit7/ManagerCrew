@@ -271,3 +271,47 @@ p {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Premium File Uploader */
+.file-uploader {
+  border: 2px dashed rgba(56, 189, 248, 0.25);
+  border-radius: 12px;
+  background: rgba(10, 15, 30, 0.3);
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.file-uploader:hover, .file-uploader.dragging {
+  border-color: var(--color-blue);
+  background: rgba(56, 189, 248, 0.06);
+  box-shadow: 0 0 16px 0 rgba(56, 189, 248, 0.1);
+}
+
+.file-uploader-icon {
+  font-size: 2.2rem;
+  color: var(--color-blue);
+  transition: transform 0.2s ease;
+}
+
+.file-uploader:hover .file-uploader-icon {
+  transform: translateY(-2px);
+}
+
+.file-uploader-text {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.file-uploader-subtext {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

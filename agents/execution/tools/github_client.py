@@ -19,6 +19,7 @@ class GitHubConnector:
         
         self.state_file = "mock_github_state.json"
         self._init_mock_state()
+        self.last_error = None
         
         # Determine if we should mock GitHub actions
         self.mock_mode = os.getenv("GITHUB_MOCK", "false").lower() == "true"
@@ -56,10 +57,61 @@ class GitHubConnector:
         except Exception as e:
             print(f"⚠️ Error saving mock GitHub state: {str(e)}")
 
+    def add_collaborator(self, username: str, permission: str = "maintain") -> bool:
+        """
+        Invites a user to be a collaborator on the repository.
+        Attempts to grant the requested permission (e.g. 'maintain'), falling back
+        to 'push' (write) if the repository type does not support it (e.g. personal repos).
+        """
+        if self.mock_mode:
+            print(f"[MOCK GITHUB] Invited collaborator: {username} with permission: {permission}")
+            return True
+            
+        url = f"https://api.github.com/repos/{self.repo_full}/collaborators/{username}"
+        payload = {"permission": permission}
+        try:
+            response = requests.put(url, json=payload, headers=self.headers)
+            if response.status_code in [201, 204]:
+                print(f"✅ Proactively invited/added collaborator '{username}' to {self.repo_full} with permission '{permission}'")
+                return True
+            elif response.status_code == 422 and permission == "maintain":
+                # Fallback to 'push' if 'maintain' is not supported on this repo type (e.g. personal repository)
+                print(f"⚠️ 'maintain' permission not supported for {self.repo_full}. Falling back to 'push' (write).")
+                payload_fallback = {"permission": "push"}
+                response = requests.put(url, json=payload_fallback, headers=self.headers)
+                if response.status_code in [201, 204]:
+                    print(f"✅ Proactively invited/added collaborator '{username}' to {self.repo_full} with fallback permission 'push'")
+                    return True
+            print(f"⚠️ Failed to invite collaborator '{username}': {response.status_code} - {response.text}")
+            return False
+        except Exception as e:
+            print(f"⚠️ Error inviting collaborator '{username}': {str(e)}")
+            return False
+
+    def _parse_github_error(self, response: requests.Response) -> str:
+        try:
+            data = response.json()
+            msg = data.get("message", "")
+        except Exception:
+            msg = response.text or ""
+            
+        if response.status_code == 410:
+            return f"Issues are disabled in repository '{self.repo_full}'. Please enable them in repository Settings."
+        elif response.status_code == 404:
+            return f"Repository '{self.repo_full}' not found. Check repository settings and access permissions."
+        elif response.status_code == 401:
+            return "Invalid GitHub Token. Please check your credentials."
+        elif response.status_code == 403:
+            return f"Access Forbidden (403). Your token might not have write access to '{self.repo_full}'."
+        elif response.status_code == 422:
+            return f"Validation Error (422): {msg}"
+        return f"GitHub Error {response.status_code}: {msg}"
+
     def create_issue(self, title: str, body: str, assignee: Optional[str] = None) -> Optional[dict]:
         """
         Creates an issue on GitHub.
         """
+        self.last_error = None
         if self.mock_mode:
             state = self._load_mock_state()
             issue_number = len(state["issues"]) + 101
@@ -77,6 +129,9 @@ class GitHubConnector:
             return issue
 
         # Live mode
+        if assignee:
+            self.add_collaborator(assignee)
+
         url = f"{self.base_url}/issues"
         payload = {
             "title": title,
@@ -98,12 +153,75 @@ class GitHubConnector:
                     "state": data.get("state"),
                     "html_url": data.get("html_url")
                 }
+            elif response.status_code == 422 and assignee:
+                # Fallback retry without assignee if collaborator validation failed
+                print(f"⚠️ Assignee '{assignee}' is not a collaborator yet. Retrying issue creation without assignee.")
+                payload_retry = {
+                    "title": title,
+                    "body": body + f"\n\n*(Note: Proactively invited @{assignee} as a collaborator. Assignee will show once they accept the invite.)*"
+                }
+                response = requests.post(url, json=payload_retry, headers=self.headers)
+                if response.status_code == 201:
+                    data = response.json()
+                    print(f"✅ Created Live GitHub Issue #{data.get('number')}: '{title}' (Unassigned fallback)")
+                    return {
+                        "number": data.get("number"),
+                        "title": data.get("title"),
+                        "body": data.get("body"),
+                        "assignee": None,
+                        "state": data.get("state"),
+                        "html_url": data.get("html_url")
+                    }
+                else:
+                    print(f"⚠️ Failed to create GitHub issue on fallback retry: {response.status_code} - {response.text}")
+                    self.last_error = self._parse_github_error(response)
+                    return None
             else:
                 print(f"⚠️ Failed to create GitHub issue: {response.status_code} - {response.text}")
+                self.last_error = self._parse_github_error(response)
                 return None
         except Exception as e:
             print(f"⚠️ Error creating GitHub issue: {str(e)}")
+            self.last_error = f"Network or unexpected error: {str(e)}"
             return None
+
+    def assign_issue(self, issue_number: int, assignee: str, invite_collaborator: bool = True) -> bool:
+        """
+        Assigns a GitHub issue to a collaborator.
+        """
+        if self.mock_mode:
+            state = self._load_mock_state()
+            for issue in state["issues"]:
+                if issue["number"] == issue_number:
+                    issue["assignee"] = assignee
+                    self._save_mock_state(state)
+                    print(f"[MOCK GITHUB] Assigned Issue #{issue_number} to {assignee}")
+                    return True
+            return False
+
+        # Live mode: first ensure collaborator has invite sent
+        if invite_collaborator:
+            self.add_collaborator(assignee, permission="maintain")
+        url = f"{self.base_url}/issues/{issue_number}/assignees"
+        payload = {"assignees": [assignee]}
+        try:
+            response = requests.post(url, json=payload, headers=self.headers)
+            if response.status_code in [200, 201]:
+                # Verify that assignee is actually set in response JSON (if they accepted, it will be in the assignees list)
+                data = response.json()
+                assignees = [a.get("login", "").lower() for a in data.get("assignees", []) if a]
+                if assignee.lower() in assignees:
+                    print(f"✅ Successfully assigned Live GitHub Issue #{issue_number} to {assignee}")
+                    return True
+                else:
+                    print(f"⚠️ Invited assignee @{assignee} is not in the assignees list yet (pending collaborator invite acceptance).")
+                    return False
+            else:
+                print(f"⚠️ Failed to assign GitHub Issue #{issue_number}: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            print(f"⚠️ Error assigning GitHub Issue #{issue_number}: {str(e)}")
+            return False
 
     def get_issues(self) -> List[dict]:
         if self.mock_mode:
@@ -179,6 +297,7 @@ class GitHubConnector:
                 print(f"✅ Created Live GitHub Pull Request #{pr_number}: '{title}'")
                 
                 if assignee:
+                    self.add_collaborator(assignee)
                     requests.post(f"{self.base_url}/issues/{pr_number}/assignees", json={"assignees": [assignee]}, headers=self.headers)
                 
                 return {

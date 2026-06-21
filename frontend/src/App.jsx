@@ -70,10 +70,20 @@ function App() {
     github_username: "",
     jira_account_id: "",
     slack_user_id: "",
-    is_team_lead: false
+    is_team_lead: false,
+    team_name: "FRONTEND"
   });
   const [settingsSuccess, setSettingsSuccess] = useState("");
   const [settingsError, setSettingsError] = useState("");
+
+  // Planning states
+  const [prdText, setPrdText] = useState("");
+  const [planningLoading, setPlanningLoading] = useState(false);
+  const [planningError, setPlanningError] = useState("");
+  const [planningSuccess, setPlanningSuccess] = useState("");
+  const [planningDraft, setPlanningDraft] = useState(null);
+  const [draftTasks, setDraftTasks] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Pipeline-specific state
   const [openPRs, setOpenPRs] = useState([]);
@@ -145,6 +155,136 @@ function App() {
       console.error("Error fetching tasks:", err);
     } finally {
       setTasksLoading(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const processSelectedFile = async (file) => {
+    if (!file) return;
+    const isPdf = file.name.endsWith('.pdf') || file.type === 'application/pdf';
+    if (isPdf) {
+      setPlanningLoading(true);
+      setPlanningError("");
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch(`${API_BASE}/api/planning/upload-pdf`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setPrdText(data.text);
+        } else {
+          setPlanningError(data.detail || "Failed to extract text from PDF.");
+        }
+      } catch (err) {
+        setPlanningError("Network error occurred during PDF upload.");
+      } finally {
+        setPlanningLoading(false);
+      }
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPrdText(event.target.result);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processSelectedFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleCompileDraft = async () => {
+    if (!prdText) {
+      setPlanningError("Please enter PRD document content.");
+      return;
+    }
+    setPlanningLoading(true);
+    setPlanningError("");
+    setPlanningSuccess("");
+    setPlanningDraft(null);
+    setDraftTasks([]);
+    try {
+      const res = await fetch(`${API_BASE}/api/planning/draft`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prd: prdText })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.success === false) {
+          setPlanningError(data.error || "Failed to compile draft.");
+        } else {
+          setPlanningDraft(data);
+          setDraftTasks(data.tasks);
+        }
+      } else {
+        setPlanningError(data.detail || "Error compiling planning draft.");
+      }
+    } catch (err) {
+      setPlanningError(err.message || "Network error occurred.");
+    } finally {
+      setPlanningLoading(false);
+    }
+  };
+
+  const handleUpdateDraftTask = (index, key, val) => {
+    const updated = [...draftTasks];
+    if (key === 'assigned_engineer') {
+      const eng = (appConfig?.teams || []).flatMap(t => t.engineers).find(e => e.jira_account_id === val);
+      updated[index].assigned_engineer_jira_id = val;
+      updated[index].assigned_engineer_name = eng ? eng.name : "Unassigned";
+      updated[index].assigned_engineer_github_username = eng ? eng.github_username : "";
+    } else {
+      updated[index][key] = val;
+    }
+    setDraftTasks(updated);
+  };
+
+  const handleApproveDispatch = async () => {
+    setPlanningLoading(true);
+    setPlanningError("");
+    setPlanningSuccess("");
+    try {
+      const res = await fetch(`${API_BASE}/api/planning/approve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tasks: draftTasks })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPlanningSuccess(data.message);
+        setPlanningDraft(null);
+        setDraftTasks([]);
+        setPrdText("");
+        refreshData();
+      } else {
+        setPlanningError(data.detail || "Failed to dispatch tasks.");
+      }
+    } catch (err) {
+      setPlanningError(err.message || "Network error occurred.");
+    } finally {
+      setPlanningLoading(false);
     }
   };
 
@@ -402,6 +542,12 @@ function App() {
             onClick={() => { setActiveTab("tasks"); fetchTasks(); }}
           >
             📋 Task Management
+          </li>
+          <li 
+            className={`nav-item ${activeTab === 'planning' ? 'active' : ''}`}
+            onClick={() => setActiveTab("planning")}
+          >
+            📋 Sprint Planner
           </li>
           <li 
             className={`nav-item ${activeTab === 'pipeline' ? 'active' : ''}`}
@@ -800,6 +946,182 @@ function App() {
           </div>
         )}
 
+        {activeTab === "planning" && (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32 }}>
+              <div className="glass-panel">
+                <h3 style={{ color: "#38bdf8", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 12, marginBottom: 20 }}>
+                  📋 Product Requirements Planning (PRD)
+                </h3>
+                
+                {planningSuccess && (
+                  <div style={{ background: "rgba(52,211,153,0.1)", color: "var(--color-green)", padding: 14, borderRadius: 8, marginBottom: 16 }}>
+                    {planningSuccess}
+                  </div>
+                )}
+                {planningError && (
+                  <div style={{ background: "rgba(248,113,113,0.1)", color: "var(--color-red)", padding: 14, borderRadius: 8, marginBottom: 16 }}>
+                    {planningError}
+                  </div>
+                )}
+
+                <div 
+                  className={`file-uploader ${isDragging ? 'dragging' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('prd-file-input').click()}
+                >
+                  <div className="file-uploader-icon">📥</div>
+                  <div className="file-uploader-text">Drag & drop your PRD file here, or click to browse</div>
+                  <div className="file-uploader-subtext">Supports text, markdown, or PDF files (.txt, .md, .pdf)</div>
+                  <input 
+                    type="file" 
+                    id="prd-file-input" 
+                    style={{ display: 'none' }} 
+                    accept=".txt,.md,.pdf"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: 20 }}>
+                  <label className="form-label" style={{ marginBottom: 8, fontWeight: 600 }}>Paste or Edit Product Requirement Document (PRD)</label>
+                  <textarea 
+                    className="form-textarea" 
+                    style={{ height: 180, fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}
+                    value={prdText}
+                    onChange={e => setPrdText(e.target.value)}
+                    placeholder="# Feature 1: Title&#10;- Subtask A...&#10;- Subtask B..."
+                  />
+                </div>
+                
+                <button 
+                  onClick={handleCompileDraft} 
+                  className="btn btn-primary" 
+                  disabled={planningLoading}
+                  style={{ width: "auto", minWidth: 200 }}
+                >
+                  {planningLoading ? <div className="spinner" /> : "⚡ Compile Planning Draft"}
+                </button>
+              </div>
+            </div>
+
+            {planningDraft && (
+              <div className="glass-panel" style={{ marginTop: 32, borderColor: "rgba(56, 189, 248, 0.25)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 16, marginBottom: 24 }}>
+                  <h3 style={{ color: "#38bdf8", margin: 0 }}>📋 Comprehensive Planning Preview</h3>
+                  
+                  <div style={{ display: "flex", gap: 24 }}>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Expected Sprint Duration</div>
+                      <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#fbbf24" }}>{planningDraft.duration} days</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Sprint Confidence</div>
+                      <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#34d399" }}>{planningDraft.confidence}%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ overflowX: "auto", marginBottom: 24 }}>
+                  <table className="custom-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Feature</th>
+                        <th>Task Title</th>
+                        <th>Moscow Priority</th>
+                        <th>Dynamic Team</th>
+                        <th>Assigned Engineer</th>
+                        <th>Dependencies</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {draftTasks.map((task, idx) => {
+                        const isCritical = planningDraft.criticalPathTaskIds.includes(task.id);
+                        return (
+                          <tr key={task.id} style={{ background: isCritical ? "rgba(239, 68, 68, 0.03)" : "none" }}>
+                            <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700 }}>
+                              {task.id} {isCritical && <span style={{ color: "var(--color-red)", fontSize: "0.7rem", marginLeft: 4 }} title="Critical Path">🔥</span>}
+                            </td>
+                            <td style={{ fontSize: "0.85rem", color: "#9ca3af" }}>{task.feature_name}</td>
+                            <td>
+                              <input 
+                                type="text"
+                                className="form-input"
+                                style={{ padding: "4px 8px", fontSize: "0.85rem", fontWeight: 600, width: "100%", minWidth: 200, marginBottom: 6 }}
+                                value={task.title}
+                                onChange={e => handleUpdateDraftTask(idx, "title", e.target.value)}
+                              />
+                              <textarea
+                                className="form-textarea"
+                                style={{ padding: "4px 8px", fontSize: "0.78rem", width: "100%", height: 50, resize: "vertical", fontFamily: "var(--font-sans)", lineHeight: 1.3 }}
+                                value={task.description}
+                                onChange={e => handleUpdateDraftTask(idx, "description", e.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <select 
+                                className="form-input" 
+                                style={{ padding: "4px 8px", fontSize: "0.8rem", width: "auto" }}
+                                value={task.moscow_tier}
+                                onChange={e => handleUpdateDraftTask(idx, "moscow_tier", e.target.value)}
+                              >
+                                <option value="MUST">MUST</option>
+                                <option value="SHOULD">SHOULD</option>
+                                <option value="COULD">COULD</option>
+                                <option value="WON'T">WON&apos;T</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input 
+                                type="text"
+                                className="form-input"
+                                style={{ padding: "4px 8px", fontSize: "0.8rem", width: 120 }}
+                                value={task.team_label}
+                                onChange={e => handleUpdateDraftTask(idx, "team_label", e.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <select
+                                className="form-input"
+                                style={{ padding: "4px 8px", fontSize: "0.8rem", width: "auto" }}
+                                value={task.assigned_engineer_jira_id}
+                                onChange={e => handleUpdateDraftTask(idx, "assigned_engineer", e.target.value)}
+                              >
+                                <option value="">— Unassigned —</option>
+                                {(appConfig?.teams || []).flatMap(t => t.engineers).map(eng => (
+                                  <option key={eng.jira_account_id} value={eng.jira_account_id}>
+                                    {eng.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                              {task.depends_on_ids && task.depends_on_ids.length > 0 ? task.depends_on_ids.join(", ") : "None"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 20, display: "flex", justifyContent: "flex-end" }}>
+                  <button 
+                    onClick={handleApproveDispatch} 
+                    className="btn btn-primary" 
+                    disabled={planningLoading}
+                    style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", width: "auto", minWidth: 220 }}
+                  >
+                    {planningLoading ? <div className="spinner" /> : "🚀 Approve & Dispatch Sprint"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === "pipeline" && (
           <div>
             {/* Tab: Live GitHub PR Queue & AI Audit */}
@@ -1139,6 +1461,7 @@ function App() {
                   <thead>
                     <tr>
                       <th>Name</th>
+                      <th>Team</th>
                       <th>GitHub ID</th>
                       <th>Jira Account ID</th>
                       <th>Slack User ID</th>
@@ -1149,6 +1472,7 @@ function App() {
                     {settings.engineers.map((eng, idx) => (
                       <tr key={idx}>
                         <td><strong>{eng.name}</strong></td>
+                        <td><span className="badge badge-blue" style={{ fontSize: "0.72rem" }}>{eng.team_name || "FRONTEND"}</span></td>
                         <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{eng.github_username}</td>
                         <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{eng.jira_account_id}</td>
                         <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{eng.slack_user_id || "N/A"}</td>
@@ -1166,14 +1490,14 @@ function App() {
                     ))}
                     {settings.engineers.length === 0 && (
                       <tr>
-                        <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)", fontSize: "0.9rem" }}>No team members configured.</td>
+                        <td colSpan="6" style={{ textAlign: "center", color: "var(--text-muted)", fontSize: "0.9rem" }}>No team members configured.</td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
               
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end", marginBottom: 30, background: "rgba(255,255,255,0.01)", padding: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end", marginBottom: 30, background: "rgba(255,255,255,0.01)", padding: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.05)" }}>
                 <div>
                   <label className="form-label" style={{ fontSize: "0.75rem" }}>Name</label>
                   <input 
@@ -1183,6 +1507,17 @@ function App() {
                     value={newEng.name} 
                     onChange={e => setNewEng({...newEng, name: e.target.value})}
                     placeholder="e.g. John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontSize: "0.75rem" }}>Team</label>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    style={{ padding: 8, fontSize: "0.85rem" }}
+                    value={newEng.team_name || ""} 
+                    onChange={e => setNewEng({...newEng, team_name: e.target.value})}
+                    placeholder="e.g. BACKEND"
                   />
                 </div>
                 <div>

@@ -5,7 +5,7 @@ import yaml
 from pathlib import Path
 from typing import Optional, List
 from pydantic import BaseModel
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 # Add parent directory of 'api' (which is project root) to path
@@ -19,6 +19,9 @@ from agents.execution.tools.jira_write import JiraConnector
 from agents.execution.tools.github_client import GitHubConnector
 from agents.execution.tools.slack_notify import SlackNotifier
 from agents.review.agent import ReviewAgent
+from agents.planning.prd_parser import process_and_enrich_prd
+from agents.planning.dag import detect_cycles_dfs, topological_sort_kahn
+from agents.planning.pert import run_critical_path_method, calculate_sprint_confidence
 
 app = FastAPI(title="Manager Crew EM API Hub", version="1.0.0")
 
@@ -78,33 +81,48 @@ def update_env_file(updates: dict):
 
 def update_team_config(wip_limit: int, jira_project_key: str, engineers: list, team_lead_slack_id: str = ""):
     config_path = Path("config/team_config.yaml")
-    if not config_path.exists():
-        data = {
-            "wip_limit": wip_limit,
-            "sprint_duration_days": 20,
-            "jira_project_key": jira_project_key,
-            "confidence_threshold": 0.60,
-            "teams": [{
-                "name": "FRONTEND",
-                "slack_channel": "",
-                "team_lead_slack_id": team_lead_slack_id,
-                "engineers": engineers
-            }]
+    
+    # Group engineers by team_name
+    grouped_teams = {}
+    for eng in engineers:
+        team_name = eng.get("team_name", "FRONTEND").strip().upper()
+        if team_name not in grouped_teams:
+            grouped_teams[team_name] = []
+        
+        # Clean engineer fields to serialize
+        eng_data = {
+            "name": eng["name"],
+            "jira_account_id": eng["jira_account_id"],
+            "slack_user_id": eng["slack_user_id"],
+            "github_username": eng.get("github_username", ""),
+            "is_team_lead": eng.get("is_team_lead", False)
         }
-    else:
+        grouped_teams[team_name].append(eng_data)
+        
+    teams_list = []
+    # If no engineers configured, default to a FRONTEND team
+    if not grouped_teams:
+        grouped_teams["FRONTEND"] = []
+
+    for team_name, engs in grouped_teams.items():
+        teams_list.append({
+            "name": team_name,
+            "slack_channel": f"{team_name.lower()}-alerts" if team_name in ["BACKEND", "FRONTEND"] else "",
+            "team_lead_slack_id": team_lead_slack_id,
+            "engineers": engs
+        })
+        
+    if config_path.exists():
         with open(config_path, "r") as f:
             data = yaml.safe_load(f) or {}
-        data["wip_limit"] = wip_limit
-        data["jira_project_key"] = jira_project_key
-        if "teams" not in data or not data["teams"]:
-            data["teams"] = [{
-                "name": "FRONTEND",
-                "slack_channel": "",
-                "team_lead_slack_id": team_lead_slack_id,
-                "engineers": []
-            }]
-        data["teams"][0]["engineers"] = engineers
-        data["teams"][0]["team_lead_slack_id"] = team_lead_slack_id
+    else:
+        data = {}
+        
+    data["wip_limit"] = wip_limit
+    data["sprint_duration_days"] = data.get("sprint_duration_days", 20)
+    data["jira_project_key"] = jira_project_key
+    data["confidence_threshold"] = data.get("confidence_threshold", 0.60)
+    data["teams"] = teams_list
 
     with open(config_path, "w") as f:
         yaml.safe_dump(data, f, default_flow_style=False)
@@ -154,6 +172,7 @@ class SettingsEngineer(BaseModel):
     slack_user_id: str
     github_username: str
     is_team_lead: bool = False
+    team_name: Optional[str] = "FRONTEND"
 
 class SettingsUpdateRequest(BaseModel):
     github_repo: str
@@ -285,12 +304,14 @@ def create_task(req: CreateTaskRequest):
             assignee=req.assigneeGithubId or None
         )
         
+        github_status = f"#{github_issue.get('number')}" if github_issue else f"N/A (Error: {github.last_error})" if github.last_error else "N/A"
+        
         # 3. Log cross-agent communication
         review_agent.log_agent_communication(
             sender="Execution Agent",
             receiver="GitHub",
             topic="Issue Created",
-            content=f"Task '{req.title}' created as Jira issue {jira_key} and GitHub issue #{github_issue.get('number') if github_issue else 'N/A'}. Assigned to {req.assigneeName}."
+            content=f"Task '{req.title}' created as Jira issue {jira_key} and GitHub issue {github_status}. Assigned to {req.assigneeName}."
         )
         
         return {
@@ -298,7 +319,7 @@ def create_task(req: CreateTaskRequest):
             "jiraKey": jira_key,
             "jiraUrl": f"{jira.base_url}/browse/{jira_key}",
             "githubIssue": github_issue,
-            "message": f"Task created! Jira: {jira_key}, GitHub Issue: #{github_issue.get('number') if github_issue else 'N/A'}"
+            "message": f"Task created! Jira: {jira_key}, GitHub Issue: {github_status}"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -312,6 +333,13 @@ def list_active_tasks():
         issues = jira.get_active_issues(config.jira_project_key)
         github_issues = github.get_issues()
         
+        # Build mapping of jira_account_id -> github_username
+        jira_to_gh = {}
+        for team in config.teams:
+            for eng in team.engineers:
+                if eng.jira_account_id and eng.github_username:
+                    jira_to_gh[eng.jira_account_id] = eng.github_username
+        
         # Enrich Jira issues with GitHub issue links
         enriched = []
         for issue in issues:
@@ -319,6 +347,16 @@ def list_active_tasks():
                 (g for g in github_issues if f"[{issue['key']}]" in (g.get("title") or "")),
                 None
             )
+            
+            # Auto-assign GitHub issue if it was previously created as unassigned (e.g. pending invite acceptance)
+            target_gh_user = jira_to_gh.get(issue.get("assignee_id"))
+            if gh_match and target_gh_user and not gh_match.get("assignee"):
+                print(f"🔄 Attempting to assign GitHub Issue #{gh_match['number']} to accepted collaborator '{target_gh_user}'...")
+                success = github.assign_issue(gh_match["number"], target_gh_user, invite_collaborator=False)
+                if success:
+                    # Update local match representation so it's returned correctly to the frontend
+                    gh_match["assignee"] = target_gh_user
+            
             enriched.append({
                 **issue,
                 "github_issue": gh_match
@@ -331,22 +369,47 @@ def list_active_tasks():
 @app.post("/api/tasks/assign")
 def assign_task(req: AssignTaskRequest):
     """
-    Assigns a Jira issue to a team member.
+    Assigns a Jira issue to a team member and attempts to sync the assignment to GitHub.
     """
     try:
+        # 1. Assign in Jira
         url = f"{jira.base_url}/rest/api/3/issue/{req.jiraKey}/assignee"
         payload = {"accountId": req.assigneeJiraId}
         resp = __import__('requests').put(url, json=payload, auth=jira.auth, headers=jira.headers)
-        if resp.status_code in [204, 200, 201]:
-            review_agent.log_agent_communication(
-                sender="Execution Agent",
-                receiver="Jira",
-                topic="Issue Assigned",
-                content=f"Jira issue {req.jiraKey} assigned to account ID {req.assigneeJiraId}."
+        if resp.status_code not in [204, 200, 201]:
+            raise HTTPException(status_code=400, detail=f"Failed to assign in Jira: {resp.text}")
+
+        # 2. Try to sync to GitHub
+        target_gh_user = None
+        for team in config.teams:
+            for eng in team.engineers:
+                if eng.jira_account_id == req.assigneeJiraId:
+                    target_gh_user = eng.github_username
+                    break
+            if target_gh_user:
+                break
+        
+        gh_message = ""
+        if target_gh_user:
+            github_issues = github.get_issues()
+            gh_match = next(
+                (g for g in github_issues if f"[{req.jiraKey}]" in (g.get("title") or "")),
+                None
             )
-            return {"success": True, "message": f"Issue {req.jiraKey} assigned successfully."}
-        else:
-            raise HTTPException(status_code=400, detail=f"Failed to assign: {resp.text}")
+            if gh_match:
+                success = github.assign_issue(gh_match["number"], target_gh_user)
+                if success:
+                    gh_message = f" and GitHub issue #{gh_match['number']} assigned to @{target_gh_user}"
+                else:
+                    gh_message = f" (GitHub collaborator invite sent to @{target_gh_user}; issue will assign automatically once accepted)"
+
+        review_agent.log_agent_communication(
+            sender="Execution Agent",
+            receiver="Jira/GitHub",
+            topic="Issue Assigned",
+            content=f"Jira issue {req.jiraKey} assigned to account ID {req.assigneeJiraId}{gh_message}."
+        )
+        return {"success": True, "message": f"Issue {req.jiraKey} assigned successfully{gh_message}."}
     except HTTPException:
         raise
     except Exception as e:
@@ -361,17 +424,18 @@ def get_settings():
     engineers_data = []
     team_lead_slack_id = ""
     if config.teams:
-        team = config.teams[0]
-        team_lead_slack_id = getattr(team, "team_lead_slack_id", "")
-        for eng in team.engineers:
-            engineers_data.append({
-                "name": eng.name,
-                "jira_account_id": eng.jira_account_id,
-                "slack_user_id": eng.slack_user_id,
-                "github_username": eng.github_username,
-                "is_team_lead": getattr(eng, "is_team_lead", False)
-            })
-            
+        team_lead_slack_id = getattr(config.teams[0], "team_lead_slack_id", "")
+        for team in config.teams:
+            for eng in team.engineers:
+                engineers_data.append({
+                    "name": eng.name,
+                    "jira_account_id": eng.jira_account_id,
+                    "slack_user_id": eng.slack_user_id,
+                    "github_username": eng.github_username,
+                    "is_team_lead": getattr(eng, "is_team_lead", False),
+                    "team_name": team.name
+                })
+                
     return {
         "github_repo": os.getenv("GITHUB_REPO", ""),
         "slack_bot_token": os.getenv("SLACK_BOT_TOKEN", ""),
@@ -414,7 +478,8 @@ def update_settings(req: SettingsUpdateRequest):
                 "jira_account_id": eng.jira_account_id.strip(),
                 "slack_user_id": eng.slack_user_id.strip(),
                 "github_username": eng.github_username.strip(),
-                "is_team_lead": eng.is_team_lead
+                "is_team_lead": eng.is_team_lead,
+                "team_name": (eng.team_name or "FRONTEND").strip().upper()
             })
             
         update_team_config(
@@ -855,6 +920,221 @@ def get_open_prs():
             })
         
         return {"openPRs": enriched, "count": len(enriched)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+CURRENT_PLANNING_DRAFT = None
+
+class ParsePRDRequest(BaseModel):
+    prd: str
+
+class TaskApprovalItem(BaseModel):
+    id: str
+    feature_name: str
+    title: str
+    description: str
+    acceptance_criteria: List[str]
+    team_label: str
+    moscow_tier: str
+    o: float
+    m: float
+    p: float
+    depends_on_ids: List[str]
+    assigned_engineer_name: str
+    assigned_engineer_jira_id: str
+    assigned_engineer_github_username: str
+
+class ApprovePlanningRequest(BaseModel):
+    tasks: List[TaskApprovalItem]
+
+def simulate_planning(topo_tasks, config):
+    wip_monitor = review_agent.wip_monitor
+    current_wip = wip_monitor.get_active_wip_counts(config.jira_project_key)
+    
+    team_map = config.get_team_mapping()
+    team_pointers = {team.name.upper(): 0 for team in config.teams}
+    
+    assigned_tasks = []
+    for task in topo_tasks:
+        target_team_name = task.team_label.upper()
+        if target_team_name not in team_map:
+            target_team_name = config.teams[0].name.upper() if config.teams else "FRONTEND"
+        
+        assigned_engineer = None
+        if target_team_name in team_map:
+            team_info = team_map[target_team_name]
+            engineers = team_info.engineers
+            
+            if engineers:
+                num_engineers = len(engineers)
+                start_index = team_pointers[target_team_name]
+                
+                for i in range(num_engineers):
+                    eval_idx = (start_index + i) % num_engineers
+                    candidate = engineers[eval_idx]
+                    candidate_wip = current_wip.get(candidate.jira_account_id, 0)
+                    
+                    if candidate_wip < config.wip_limit:
+                        assigned_engineer = candidate
+                        team_pointers[target_team_name] = (eval_idx + 1) % num_engineers
+                        current_wip[candidate.jira_account_id] = candidate_wip + 1
+                        break
+                
+                if not assigned_engineer:
+                    assigned_engineer = engineers[start_index]
+                    team_pointers[target_team_name] = (start_index + 1) % num_engineers
+        
+        assigned_tasks.append({
+            "id": task.id,
+            "feature_name": task.feature_name,
+            "title": task.title,
+            "description": task.description,
+            "acceptance_criteria": task.acceptance_criteria,
+            "team_label": target_team_name,
+            "moscow_tier": task.moscow_tier,
+            "o": task.o,
+            "m": task.m,
+            "p": task.p,
+            "depends_on_ids": task.depends_on_ids,
+            "assigned_engineer_name": assigned_engineer.name if assigned_engineer else "Unassigned",
+            "assigned_engineer_jira_id": assigned_engineer.jira_account_id if assigned_engineer else "",
+            "assigned_engineer_github_username": assigned_engineer.github_username if assigned_engineer else ""
+        })
+    return assigned_tasks
+
+@app.post("/api/planning/upload-pdf")
+async def upload_prd_pdf(file: UploadFile = File(...)):
+    try:
+        from pypdf import PdfReader
+        import io
+
+        contents = await file.read()
+        reader = PdfReader(io.BytesIO(contents))
+        text = ""
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
+        
+        return {
+            "success": True,
+            "text": text.strip()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to parse PDF: {str(e)}")
+
+@app.post("/api/planning/draft")
+def compile_planning_draft(req: ParsePRDRequest):
+    global CURRENT_PLANNING_DRAFT
+    try:
+        # Load latest config
+        load_dotenv(override=True)
+        current_cfg = load_config()
+
+        # 1. Parse and enrich
+        enriched_tasks = process_and_enrich_prd(req.prd)
+        
+        # 2. Cycle detection
+        has_cycles = detect_cycles_dfs(enriched_tasks)
+        if has_cycles:
+            return {
+                "success": False,
+                "error": "Cyclic dependencies detected in PRD! Please resolve cycle paths.",
+                "hasCycles": True,
+                "tasks": []
+            }
+            
+        # 3. Topological sorting
+        sorted_tasks = topological_sort_kahn(enriched_tasks)
+        
+        # 4. Critical Path Method & PERT math
+        metrics, cp_ids, duration, variance = run_critical_path_method(enriched_tasks, sorted_tasks)
+        confidence = calculate_sprint_confidence(duration, variance, current_cfg.sprint_duration_days)
+        
+        # 5. Round-Robin simulated allocation
+        simulated_tasks = simulate_planning(sorted_tasks, current_cfg)
+        
+        # Cache draft
+        CURRENT_PLANNING_DRAFT = simulated_tasks
+        
+        return {
+            "success": True,
+            "duration": round(duration, 2),
+            "confidence": round(confidence * 100, 1),
+            "criticalPathTaskIds": cp_ids,
+            "hasCycles": False,
+            "tasks": simulated_tasks
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/planning/approve")
+def approve_planning_dispatch(req: ApprovePlanningRequest):
+    try:
+        planning_id_to_jira_key = {}
+        dispatched_details = []
+        github_warnings = []
+        
+        # Process sequentially following their dependency orders
+        for task in req.tasks:
+            assignee_id = task.assigned_engineer_jira_id if task.assigned_engineer_jira_id else None
+            assignee_name = task.assigned_engineer_name if task.assigned_engineer_name else "Unassigned"
+            
+            # Create Jira issue
+            jira_key = jira.create_ticket(
+                title=task.title,
+                description=task.description,
+                team=task.team_label,
+                moscow=task.moscow_tier,
+                assignee_id=assignee_id
+            )
+            
+            planning_id_to_jira_key[task.id] = jira_key
+            
+            # Create GitHub issue
+            github_issue = github.create_issue(
+                title=f"[{jira_key}] {task.title}",
+                body=f"**Jira Issue:** [{jira_key}]({jira.base_url}/browse/{jira_key})\n\n**Description:**\n{task.description}\n\n**Team:** {task.team_label}\n**MoSCoW Priority:** {task.moscow_tier}\n**Assigned To:** {assignee_name}",
+                assignee=task.assigned_engineer_github_username if task.assigned_engineer_github_username else None
+            )
+            
+            if not github_issue and github.last_error:
+                github_warnings.append(f"Task '{task.title}': {github.last_error}")
+            
+            dispatched_details.append({
+                "id": task.id,
+                "jiraKey": jira_key,
+                "githubIssueNumber": github_issue.get("number") if github_issue else None
+            })
+            
+            # Link dependencies inside Jira
+            for dep_id in task.depends_on_ids:
+                if dep_id in planning_id_to_jira_key:
+                    parent_jira_key = planning_id_to_jira_key[dep_id]
+                    try:
+                        jira.create_dependency_link(outward_key=parent_jira_key, inward_key=jira_key)
+                    except Exception as le:
+                        print(f"⚠️ Dependency link failed: {parent_jira_key} -> {jira_key}: {str(le)}")
+                        
+            # Log cross-agent communication
+            review_agent.log_agent_communication(
+                sender="Planning Agent",
+                receiver="Jira/GitHub",
+                topic="Sprint Dispatch",
+                content=f"Task '{task.title}' created as Jira issue {jira_key} and assigned to {assignee_name}."
+            )
+            
+        success_msg = f"Successfully created {len(req.tasks)} Jira issues!"
+        if github_warnings:
+            success_msg += " WARNING: GitHub issues could not be created: " + " | ".join(github_warnings)
+        else:
+            success_msg += " GitHub issues successfully synced."
+
+        return {
+            "success": True,
+            "message": success_msg,
+            "dispatched": dispatched_details
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

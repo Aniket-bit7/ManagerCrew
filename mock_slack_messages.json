@@ -855,5 +855,232 @@
       }
     ],
     "timestamp": 1782047341.130305
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #16 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #16 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* button\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 1/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `YES`\n*Fulfillment Reasoning:* The change appears to be a minor update to a button's hover effect, which matches the PR title 'button'."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 4 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782048597.5680451
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83c\udf89 Your PR #16 *'button'* has been *merged successfully*! Great work!",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\u2705 PR Merged Successfully"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR #16:* button\n\n\ud83c\udf89 Your code has been reviewed, approved, and merged into the main branch."
+        }
+      }
+    ],
+    "timestamp": 1782048600.2796931
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #47 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #47 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* deletion button\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `NO`\n*Fulfillment Reasoning:* The manager's requirement was to create a feature for deleting existing tasks, but the provided code introduces a 'Clear Completed' button instead of a general deletion feature, which does not fully satisfy the specified task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Anwesha (aaneesa)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 14 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782070162.949306
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udc64 PR #47 *'deletion button'* requires *manual human review*.",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udc64 Manual Review Required"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR #47:* deletion button\n\nThe AI review agent flagged this PR for mandatory human review due to complexity, security concerns, or unfulfilled requirements."
+        }
+      }
+    ],
+    "timestamp": 1782070163.585424
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udd0d *Manual Code Review Requested* \u2014 PR #47\nTitle: *deletion button*",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0d Human Code Review Required",
+          "emoji": true
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "The AI Review Agent has flagged *PR #47* for mandatory human review.\n*PR:* <https://github.com/Aniket-bit7/todo-app/pull/47|deletion button>\n*Jira Issue:* `KAN-92`\n*PR Author:* @unknown"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\ud83d\udcca Scorecard Summary:*\n\u2022 Complexity: `6/10`\n\u2022 Security Risk: `LOW`\n\u2022 Conventions: `PASS`\n\u2022 Requirements Met: `NO`"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\u26a0\ufe0f Issues Found:*\n\u2022 *Requirements Not Met:* The manager's requirement was to create a feature for deleting existing tasks, but the provided code introduces a 'Clear Completed' button instead of a general deletion feature, which does not fully satisfy the specified task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_Please review the code, give feedback to the developer, and ask them to raise a new PR once the issues are resolved. The Review Agent will automatically re-audit the next PR._"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "actions",
+        "elements": [
+          {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "\ud83d\udcc2 View PR on GitHub"
+            },
+            "url": "https://github.com/Aniket-bit7/todo-app/pull/47"
+          }
+        ]
+      }
+    ],
+    "timestamp": 1782070164.774111
   }
 ]

@@ -1,42 +1,371 @@
 {
   "reviewer_stats": {
     "Ayush Mittal": {
+      "pending": 2,
+      "completed": 0,
+      "avg_response_hours": 2.0
+    },
+    "Anwesha": {
       "pending": 1,
       "completed": 0,
       "avg_response_hours": 2.0
     }
   },
   "bottlenecks": {
-    "frontend/src/": 1
+    "frontend/src/": 4,
+    "backend/data/": 1,
+    "backend/": 1
   },
   "cross_agent_logs": [
     {
-      "timestamp": "2026-06-21 18:39:27",
+      "timestamp": "2026-06-22 00:59:52",
       "sender": "Review Agent",
       "receiver": "Risk Agent",
       "topic": "PR Rejected",
-      "content": "PR #6 rejected and closed due to quality audit failure."
+      "content": "PR #47 rejected and closed due to quality audit failure."
     },
     {
-      "timestamp": "2026-06-21 18:39:01",
+      "timestamp": "2026-06-22 00:59:24",
       "sender": "Review Agent",
       "receiver": "Team Lead",
       "topic": "Manual Review Escalation",
-      "content": "PR #6 ('feat: add inline task editing with save and cancel actions') escalated to team lead (Slack: U_TEST_LEAD_123) for human review. 0 issue(s) found."
+      "content": "PR #47 ('deletion button') escalated to team lead (Slack: U_TEST_LEAD_123) for human review. 1 issue(s) found."
     },
     {
-      "timestamp": "2026-06-21 18:38:58",
+      "timestamp": "2026-06-22 00:59:22",
       "sender": "Review Agent",
       "receiver": "Execution Agent",
       "topic": "Jira Transition Signal",
-      "content": "PR #6 reviewed. Recommendation: MANUAL_REVIEW. Awaiting Execution Agent to transition Jira issue status accordingly."
+      "content": "PR #47 reviewed. Recommendation: MANUAL_REVIEW. Awaiting Execution Agent to transition Jira issue status accordingly."
     },
     {
-      "timestamp": "2026-06-21 18:38:58",
+      "timestamp": "2026-06-22 00:59:22",
       "sender": "Review Agent",
       "receiver": "Communication Agent",
       "topic": "PR Audit Payload",
-      "content": "PR #6 audit complete. Complexity: 6/10, Security: LOW, Recommendation: MANUAL_REVIEW. Full payload available."
+      "content": "PR #47 audit complete. Complexity: 6/10, Security: LOW, Recommendation: MANUAL_REVIEW. Full payload available."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:39",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Statistics' created as Jira issue KAN-95 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:36",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Prioritization' created as Jira issue KAN-94 and assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:33",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Categorization' created as Jira issue KAN-93 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:30",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Deletion' created as Jira issue KAN-92 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:26",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Reminders' created as Jira issue KAN-91 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:22",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Editing' created as Jira issue KAN-90 and assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:20",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Creation' created as Jira issue KAN-89 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:17",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Logout' created as Jira issue KAN-88 and assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:13",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Login' created as Jira issue KAN-87 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 00:48:09",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Registration' created as Jira issue KAN-86 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 22:10:06",
+      "sender": "Execution Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-84 assigned to account ID 712020:98f75e17-9f36-4925-97ad-917b733ac3b7 and GitHub issue #35 assigned to @aaneesa."
+    },
+    {
+      "timestamp": "2026-06-21 22:07:07",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'hey' created as Jira issue KAN-85 and GitHub issue #36. Assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 22:04:38",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'OVERRIDDEN TITLE: Secure Charging API' created as Jira issue KAN-84 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 22:01:41",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'OVERRIDDEN TITLE: Secure Charging API' created as Jira issue KAN-81 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:57:59",
+      "sender": "Execution Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-80 assigned to account ID 712020:98f75e17-9f36-4925-97ad-917b733ac3b7."
+    },
+    {
+      "timestamp": "2026-06-21 21:57:28",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'abhi tk khana bnane nhi aaya kyu?' created as Jira issue KAN-80 and GitHub issue #33. Assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:56:22",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'OVERRIDDEN TITLE: Secure Charging API' created as Jira issue KAN-79 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:46:04",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'accha khana bnana sikho' created as Jira issue KAN-78 and GitHub issue #31. Assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 21:44:55",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'lejf' created as Jira issue KAN-77 and GitHub issue #30. Assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:43:41",
+      "sender": "Execution Agent",
+      "receiver": "Jira",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-76 assigned to account ID 712020:c8455f75-d3f1-4ed0-8a3f-e724935eaee7."
+    },
+    {
+      "timestamp": "2026-06-21 21:43:20",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'OVERRIDDEN TITLE: Secure Charging API' created as Jira issue KAN-76 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:39:19",
+      "sender": "Execution Agent",
+      "receiver": "Jira",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-75 assigned to account ID 712020:c8455f75-d3f1-4ed0-8a3f-e724935eaee7."
+    },
+    {
+      "timestamp": "2026-06-21 21:38:25",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'make good food' created as Jira issue KAN-75 and GitHub issue #N/A. Assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 21:33:50",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'OVERRIDDEN TITLE: Secure Charging API' created as Jira issue KAN-74 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:27:58",
+      "sender": "Execution Agent",
+      "receiver": "Jira",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-73 assigned to account ID 712020:98f75e17-9f36-4925-97ad-917b733ac3b7."
+    },
+    {
+      "timestamp": "2026-06-21 21:27:20",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'hgvjhkb' created as Jira issue KAN-73 and GitHub issue #N/A. Assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:24:47",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'xyz' created as Jira issue KAN-72 and GitHub issue #N/A. Assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 21:24:06",
+      "sender": "Execution Agent",
+      "receiver": "Jira",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-71 assigned to account ID 712020:98f75e17-9f36-4925-97ad-917b733ac3b7."
+    },
+    {
+      "timestamp": "2026-06-21 21:22:29",
+      "sender": "Execution Agent",
+      "receiver": "Jira",
+      "topic": "Issue Assigned",
+      "content": "Jira issue KAN-71 assigned to account ID 712020:98f75e17-9f36-4925-97ad-917b733ac3b7."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:50",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Statistics' created as Jira issue KAN-71 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:48",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Categorization' created as Jira issue KAN-70 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:46",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Filter Functionality' created as Jira issue KAN-69 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:44",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Search Functionality' created as Jira issue KAN-68 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:42",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Reminders' created as Jira issue KAN-67 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:40",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Due Date Assignment' created as Jira issue KAN-66 and assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:37",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Prioritization' created as Jira issue KAN-65 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:35",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Deletion' created as Jira issue KAN-64 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:33",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Editing' created as Jira issue KAN-63 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:31",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Dashboard Display' created as Jira issue KAN-62 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:29",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Creation' created as Jira issue KAN-61 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:27",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Logout' created as Jira issue KAN-60 and assigned to Anwesha."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:24",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Login' created as Jira issue KAN-59 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:19:22",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement User Registration' created as Jira issue KAN-58 and assigned to Aniket Pathak."
+    },
+    {
+      "timestamp": "2026-06-21 21:16:27",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Statistics' created as Jira issue KAN-57 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:16:25",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Prioritization' created as Jira issue KAN-56 and assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-21 21:16:23",
+      "sender": "Planning Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Sprint Dispatch",
+      "content": "Task 'Implement Task Deletion' created as Jira issue KAN-55 and assigned to Aniket Pathak."
     }
   ],
   "pending_reviews": {}
