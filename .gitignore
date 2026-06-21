@@ -3,3 +3,6 @@
 
 tests
 __tests__
+
+test_planning_agent.py
+
