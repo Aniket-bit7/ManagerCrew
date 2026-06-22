@@ -2,27 +2,24 @@ confidence_threshold: 0.6
 jira_project_key: KAN
 sprint_duration_days: 14
 teams:
+# manager
 - engineers:
-  - github_username: Aniket-bit7
+  - github_username: mittalayushh
     is_team_lead: false
-    jira_account_id: 712020:c8455f75-d3f1-4ed0-8a3f-e724935eaee7
-    name: Aniket Pathak
-    slack_user_id: ''
-  name: BACKEND
-  slack_channel: backend-alerts
-  team_lead_slack_id: U_TEST_LEAD_123
-- engineers:
-  - github_username: ayush-mittal
-    is_team_lead: false
-    jira_account_id: 712020:856bc8f8-1e57-4b4b-8fef-dfff217ae341
+    jira_account_id: 8d730902-21ef-4e0a-8f45-ed10f30a4e9f
     name: Ayush Mittal
-    slack_user_id: ''
-  - github_username: aaneesa
-    is_team_lead: false
-    jira_account_id: 712020:98f75e17-9f36-4925-97ad-917b733ac3b7
-    name: Anwesha
     slack_user_id: ''
   name: FRONTEND
   slack_channel: frontend-alerts
+  team_lead_slack_id: U_TEST_LEAD_123
+#team member
+- engineers:
+  - github_username: roboayushh
+    is_team_lead: false
+    jira_account_id: 7bca777e-f275-4dd5-8a89-f3d1e0d123e3
+    name: Ayush Mittal
+    slack_user_id: U0BC0B21TU1
+  name: BACKEND
+  slack_channel: backend-alerts
   team_lead_slack_id: U_TEST_LEAD_123
 wip_limit: 1

@@ -18,6 +18,22 @@ function App() {
     reviewerStats: [],
     jiraWorkloads: []
   });
+  const [performanceReport, setPerformanceReport] = useState({
+    teamSummary: {
+      assignedTasks: 0,
+      completedTasks: 0,
+      inProgressTasks: 0,
+      todoTasks: 0,
+      completionRate: 0,
+      openPrs: 0,
+      mergedPrs: 0,
+      closedPrs: 0,
+      stalePrs: 0,
+      pendingManualReviews: 0,
+      wipLoad: 0
+    },
+    members: []
+  });
   const [slackFeed, setSlackFeed] = useState([]);
   const [agentLogs, setAgentLogs] = useState([]);
 
@@ -354,6 +370,13 @@ function App() {
     fetch(`${API_BASE}/api/dashboard/workloads`)
       .then(res => res.json())
       .then(data => setWorkloads(data))
+      .catch(err => console.error(err));
+
+    fetch(`${API_BASE}/api/reports/team-performance`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.teamSummary && data.members) setPerformanceReport(data);
+      })
       .catch(err => console.error(err));
 
     fetch(`${API_BASE}/api/slack/feed`)
@@ -743,6 +766,99 @@ function App() {
                   )}
                 </div>
               </div>
+            </div>
+
+            <div className="glass-panel" style={{ marginTop: 32 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 16, alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: 14, marginBottom: 18 }}>
+                <div>
+                  <h3 style={{ marginBottom: 4 }}>Team Performance Report</h3>
+                  <p style={{ fontSize: "0.9rem" }}>Task completion, PR health, and active delivery load by assignee.</p>
+                </div>
+                <button onClick={refreshData} className="btn btn-secondary" style={{ width: "auto", padding: "8px 14px", fontSize: "0.82rem" }}>
+                  Refresh Report
+                </button>
+              </div>
+
+              <div className="dashboard-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                <div>
+                  <div style={{ color: "var(--text-secondary)", fontSize: "0.78rem", textTransform: "uppercase" }}>Completion Rate</div>
+                  <div style={{ fontSize: "2rem", fontWeight: 700, color: "#34d399" }}>{performanceReport.teamSummary.completionRate}%</div>
+                </div>
+                <div>
+                  <div style={{ color: "var(--text-secondary)", fontSize: "0.78rem", textTransform: "uppercase" }}>Assigned Tasks</div>
+                  <div style={{ fontSize: "2rem", fontWeight: 700, color: "#38bdf8" }}>{performanceReport.teamSummary.assignedTasks}</div>
+                </div>
+                <div>
+                  <div style={{ color: "var(--text-secondary)", fontSize: "0.78rem", textTransform: "uppercase" }}>WIP Load</div>
+                  <div style={{ fontSize: "2rem", fontWeight: 700, color: "#fbbf24" }}>{performanceReport.teamSummary.wipLoad}</div>
+                </div>
+                <div>
+                  <div style={{ color: "var(--text-secondary)", fontSize: "0.78rem", textTransform: "uppercase" }}>Open / Merged PRs</div>
+                  <div style={{ fontSize: "2rem", fontWeight: 700, color: "#e2e8f0" }}>{performanceReport.teamSummary.openPrs} / {performanceReport.teamSummary.mergedPrs}</div>
+                </div>
+              </div>
+
+              <table className="custom-table">
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Task Distribution</th>
+                    <th>Completion</th>
+                    <th>PRs</th>
+                    <th>Risk Signals</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {performanceReport.members.map(member => {
+                    const total = Math.max(1, member.assignedTasks);
+                    const donePct = (member.completedTasks / total) * 100;
+                    const progressPct = (member.inProgressTasks / total) * 100;
+                    const todoPct = (member.todoTasks / total) * 100;
+                    return (
+                      <tr key={`${member.team}-${member.jiraAccountId || member.name}`}>
+                        <td>
+                          <strong>{member.name}</strong>
+                          <div style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>{member.team} · @{member.githubUsername || "n/a"}</div>
+                        </td>
+                        <td style={{ minWidth: 260 }}>
+                          <div style={{ height: 10, background: "rgba(255,255,255,0.06)", borderRadius: 6, overflow: "hidden", display: "flex", marginBottom: 8 }}>
+                            <div style={{ width: `${donePct}%`, background: "var(--color-green)" }} />
+                            <div style={{ width: `${progressPct}%`, background: "var(--color-orange)" }} />
+                            <div style={{ width: `${todoPct}%`, background: "rgba(156, 163, 175, 0.55)" }} />
+                          </div>
+                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                            <span>Done {member.completedTasks}</span>
+                            <span>In Progress {member.inProgressTasks}</span>
+                            <span>To Do {member.todoTasks}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className={member.completionRate >= 70 ? "badge badge-green" : member.completionRate >= 40 ? "badge badge-orange" : "badge badge-red"}>
+                            {member.completionRate}%
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ fontSize: "0.85rem" }}>Open {member.openPrs} · Merged {member.mergedPrs}</div>
+                          <div style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>Closed {member.closedPrs}</div>
+                        </td>
+                        <td>
+                          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                            {member.wipLoad >= (appConfig?.wipLimit || 1) && <span className="badge badge-orange">WIP {member.wipLoad}</span>}
+                            {member.stalePrs > 0 && <span className="badge badge-red">{member.stalePrs} Stale PR</span>}
+                            {member.manualReviews > 0 && <span className="badge badge-orange">{member.manualReviews} Manual</span>}
+                            {member.wipLoad < (appConfig?.wipLimit || 1) && member.stalePrs === 0 && member.manualReviews === 0 && <span className="badge badge-green">Clear</span>}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {performanceReport.members.length === 0 && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)" }}>No performance data available yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

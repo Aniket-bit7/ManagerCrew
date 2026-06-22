@@ -1,8 +1,9 @@
 .env 
 .env* 
 
-tests
+tests/__pycache__/
 __tests__
 
-test_planning_agent.py
-
+# test_planning_agent.py
+*.pyc
+ 

@@ -18,6 +18,69 @@
   },
   "cross_agent_logs": [
     {
+      "timestamp": "2026-06-22 09:31:58",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'Setup OAuth2 Authentication' created as Jira issue KAN-9 and GitHub issue N/A (Error: Repository 'https://github.com/mittalayushh/nextauv' not found. Check repository settings and access permissions.). Assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 09:19:09",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'string' created as Jira issue KAN-8 and GitHub issue N/A (Error: Repository 'https://github.com/mittalayushh/nextauv' not found. Check repository settings and access permissions.). Assigned to string."
+    },
+    {
+      "timestamp": "2026-06-22 09:18:40",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'string' created as Jira issue KAN-7 and GitHub issue N/A (Error: Repository 'https://github.com/mittalayushh/nextauv' not found. Check repository settings and access permissions.). Assigned to string."
+    },
+    {
+      "timestamp": "2026-06-22 08:23:20",
+      "sender": "Execution Agent",
+      "receiver": "Jira/GitHub",
+      "topic": "Issue Assigned",
+      "content": "Jira issue MOCK-123 assigned to account ID 8d730902-21ef-4e0a-8f45-ed10f30a4e9f."
+    },
+    {
+      "timestamp": "2026-06-22 08:23:20",
+      "sender": "Communication Agent",
+      "receiver": "Ayush Mittal",
+      "topic": "Task Reassignment Notification",
+      "content": "Sent reassignment notification for Jira issue MOCK-123."
+    },
+    {
+      "timestamp": "2026-06-22 08:22:05",
+      "sender": "Communication Agent",
+      "receiver": "Ayush Mittal",
+      "topic": "Task Assignment Notification",
+      "content": "Sent task assignment notification for Jira issue MOCK-272."
+    },
+    {
+      "timestamp": "2026-06-22 08:22:05",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'Test communication agent task' created as Jira issue MOCK-272 and GitHub issue #101. Assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 07:46:54",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'asd' created as Jira issue KAN-6 and GitHub issue N/A (Error: Repository 'https://github.com/mittalayushh/nextauv' not found. Check repository settings and access permissions.). Assigned to Ayush Mittal."
+    },
+    {
+      "timestamp": "2026-06-22 07:46:28",
+      "sender": "Execution Agent",
+      "receiver": "GitHub",
+      "topic": "Issue Created",
+      "content": "Task 'Setup OAuth2 Authentication' created as Jira issue KAN-5 and GitHub issue N/A (Error: Repository 'https://github.com/mittalayushh/nextauv' not found. Check repository settings and access permissions.). Assigned to Ayush Mittal."
+    },
+    {
       "timestamp": "2026-06-22 00:59:52",
       "sender": "Review Agent",
       "receiver": "Risk Agent",
@@ -303,69 +366,6 @@
       "receiver": "Jira/GitHub",
       "topic": "Sprint Dispatch",
       "content": "Task 'Implement Task Deletion' created as Jira issue KAN-64 and assigned to Aniket Pathak."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:33",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Task Editing' created as Jira issue KAN-63 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:31",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Dashboard Display' created as Jira issue KAN-62 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:29",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Task Creation' created as Jira issue KAN-61 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:27",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement User Logout' created as Jira issue KAN-60 and assigned to Anwesha."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:24",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement User Login' created as Jira issue KAN-59 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:19:22",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement User Registration' created as Jira issue KAN-58 and assigned to Aniket Pathak."
-    },
-    {
-      "timestamp": "2026-06-21 21:16:27",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Task Statistics' created as Jira issue KAN-57 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:16:25",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Task Prioritization' created as Jira issue KAN-56 and assigned to Ayush Mittal."
-    },
-    {
-      "timestamp": "2026-06-21 21:16:23",
-      "sender": "Planning Agent",
-      "receiver": "Jira/GitHub",
-      "topic": "Sprint Dispatch",
-      "content": "Task 'Implement Task Deletion' created as Jira issue KAN-55 and assigned to Aniket Pathak."
     }
   ],
   "pending_reviews": {}

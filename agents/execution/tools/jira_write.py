@@ -169,6 +169,69 @@ class JiraConnector:
             print(f"⚠️ Error getting issue details: {str(e)}")
             return None
 
+    def get_project_issues_for_report(self, project_key: str) -> List[dict]:
+        """
+        Fetches project issues for manager performance reporting.
+        This includes Done and non-Done work so completion rates are meaningful.
+        """
+        if self.mock_mode or not self.base_url:
+            print("[MOCK JIRA] Returning sample project issue rows for performance report.")
+            return [
+                {
+                    "key": "MOCK-101",
+                    "summary": "Mock completed backend task",
+                    "status": "Done",
+                    "statusCategory": "done",
+                    "assignee_id": "7bca777e-f275-4dd5-8a89-f3d1e0d123e3",
+                    "assignee_name": "Ayush Mittal",
+                },
+                {
+                    "key": "MOCK-102",
+                    "summary": "Mock in-progress backend task",
+                    "status": "In Progress",
+                    "statusCategory": "in_progress",
+                    "assignee_id": "7bca777e-f275-4dd5-8a89-f3d1e0d123e3",
+                    "assignee_name": "Ayush Mittal",
+                },
+                {
+                    "key": "MOCK-103",
+                    "summary": "Mock todo frontend task",
+                    "status": "To Do",
+                    "statusCategory": "to_do",
+                    "assignee_id": "8d730902-21ef-4e0a-8f45-ed10f30a4e9f",
+                    "assignee_name": "Ayush Mittal",
+                },
+            ]
+
+        url = f"{self.base_url}/rest/api/3/search/jql"
+        jql = f'project = "{project_key}"'
+        params = {"jql": jql, "fields": "summary,status,assignee", "maxResults": 200}
+
+        try:
+            response = requests.get(url, params=params, auth=self.auth, headers=self.headers)
+            if response.status_code != 200:
+                print(f"⚠️ Failed to fetch report issues: {response.status_code} - {response.text}")
+                return []
+
+            result = []
+            for issue in response.json().get("issues", []):
+                fields = issue.get("fields", {})
+                status = fields.get("status", {}) or {}
+                assignee = fields.get("assignee")
+                status_name = status.get("name", "Unknown")
+                result.append({
+                    "key": issue.get("key"),
+                    "summary": fields.get("summary", ""),
+                    "status": status_name,
+                    "statusCategory": status.get("statusCategory", {}).get("key", ""),
+                    "assignee_id": assignee.get("accountId") if assignee else None,
+                    "assignee_name": assignee.get("displayName") if assignee else "Unassigned",
+                })
+            return result
+        except Exception as e:
+            print(f"⚠️ Error fetching report issues: {str(e)}")
+            return []
+
     def transition_issue(self, issue_key: str, transition_name: str = "Done") -> bool:
         """
         Finds the transition ID matching the transition_name and transitions the issue.

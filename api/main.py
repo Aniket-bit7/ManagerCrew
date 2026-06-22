@@ -18,6 +18,8 @@ from agents.shared.config_loader import load_config
 from agents.execution.tools.jira_write import JiraConnector
 from agents.execution.tools.github_client import GitHubConnector
 from agents.execution.tools.slack_notify import SlackNotifier
+from agents.communication.agent import CommunicationAgent
+from agents.communication.reporting import build_team_performance_report
 from agents.review.agent import ReviewAgent
 from agents.planning.prd_parser import process_and_enrich_prd
 from agents.planning.dag import detect_cycles_dfs, topological_sort_kahn
@@ -39,16 +41,37 @@ config = load_config()
 jira = JiraConnector(config=config)
 github = GitHubConnector()
 slack = SlackNotifier()
+communication_agent = CommunicationAgent(slack=slack)
 review_agent = ReviewAgent(config=config)
 
 def reload_components():
-    global config, jira, github, slack, review_agent
+    global config, jira, github, slack, communication_agent, review_agent
     load_dotenv(override=True)
     config = load_config()
     jira = JiraConnector(config=config)
     github = GitHubConnector()
     slack = SlackNotifier()
+    communication_agent = CommunicationAgent(slack=slack)
     review_agent = ReviewAgent(config=config)
+
+def find_engineer_by_jira_id(jira_account_id: str):
+    if not jira_account_id:
+        return None
+    for team in config.teams:
+        for eng in team.engineers:
+            if eng.jira_account_id == jira_account_id:
+                return eng
+    return None
+
+def build_manager_digest_inputs():
+    debt_state = review_agent._load_debt_state()
+    pending = list(debt_state.get("pending_reviews", {}).values())
+    return {
+        "stats": get_dashboard_stats(),
+        "workloads": get_dashboard_workloads(),
+        "pending_reviews": pending,
+        "recent_logs": debt_state.get("cross_agent_logs", [])[:10],
+    }
 
 def update_env_file(updates: dict):
     env_path = Path(".env")
@@ -282,6 +305,19 @@ def get_dashboard_workloads():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/reports/team-performance")
+def get_team_performance_report():
+    """
+    Returns manager-facing task completion, PR health, and workload metrics by member.
+    """
+    try:
+        jira_issues = jira.get_project_issues_for_report(config.jira_project_key)
+        prs = github.get_prs()
+        debt_state = review_agent._load_debt_state()
+        return build_team_performance_report(config, jira_issues, prs, debt_state)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/tasks/create")
 def create_task(req: CreateTaskRequest):
     """
@@ -313,6 +349,30 @@ def create_task(req: CreateTaskRequest):
             topic="Issue Created",
             content=f"Task '{req.title}' created as Jira issue {jira_key} and GitHub issue {github_status}. Assigned to {req.assigneeName}."
         )
+
+        assignee = find_engineer_by_jira_id(req.assigneeJiraId)
+        assignee_slack_id = getattr(assignee, "slack_user_id", "") if assignee else ""
+        if assignee_slack_id:
+            try:
+                communication_agent.notify_task_assigned(
+                    assignee_slack_id=assignee_slack_id,
+                    assignee_name=req.assigneeName,
+                    jira_key=jira_key,
+                    title=req.title,
+                    description=req.description,
+                    team=req.team,
+                    moscow=req.moscow,
+                    github_issue_number=github_issue.get("number") if github_issue else None,
+                    action="assigned"
+                )
+                review_agent.log_agent_communication(
+                    sender="Communication Agent",
+                    receiver=req.assigneeName,
+                    topic="Task Assignment Notification",
+                    content=f"Sent task assignment notification for Jira issue {jira_key}."
+                )
+            except Exception as notify_err:
+                print(f"⚠️ Task assignment notification failed for {jira_key}: {str(notify_err)}")
         
         return {
             "success": True,
@@ -373,11 +433,14 @@ def assign_task(req: AssignTaskRequest):
     """
     try:
         # 1. Assign in Jira
-        url = f"{jira.base_url}/rest/api/3/issue/{req.jiraKey}/assignee"
-        payload = {"accountId": req.assigneeJiraId}
-        resp = __import__('requests').put(url, json=payload, auth=jira.auth, headers=jira.headers)
-        if resp.status_code not in [204, 200, 201]:
-            raise HTTPException(status_code=400, detail=f"Failed to assign in Jira: {resp.text}")
+        if getattr(jira, "mock_mode", False) or not getattr(jira, "base_url", ""):
+            print(f"[MOCK JIRA] Assigned issue {req.jiraKey} to account ID {req.assigneeJiraId}")
+        else:
+            url = f"{jira.base_url}/rest/api/3/issue/{req.jiraKey}/assignee"
+            payload = {"accountId": req.assigneeJiraId}
+            resp = __import__('requests').put(url, json=payload, auth=jira.auth, headers=jira.headers)
+            if resp.status_code not in [204, 200, 201]:
+                raise HTTPException(status_code=400, detail=f"Failed to assign in Jira: {resp.text}")
 
         # 2. Try to sync to GitHub
         target_gh_user = None
@@ -390,6 +453,7 @@ def assign_task(req: AssignTaskRequest):
                 break
         
         gh_message = ""
+        matched_engineer = None
         if target_gh_user:
             github_issues = github.get_issues()
             gh_match = next(
@@ -402,6 +466,26 @@ def assign_task(req: AssignTaskRequest):
                     gh_message = f" and GitHub issue #{gh_match['number']} assigned to @{target_gh_user}"
                 else:
                     gh_message = f" (GitHub collaborator invite sent to @{target_gh_user}; issue will assign automatically once accepted)"
+
+        matched_engineer = find_engineer_by_jira_id(req.assigneeJiraId)
+        if matched_engineer and getattr(matched_engineer, "slack_user_id", ""):
+            try:
+                communication_agent.notify_task_assigned(
+                    assignee_slack_id=matched_engineer.slack_user_id,
+                    assignee_name=matched_engineer.name,
+                    jira_key=req.jiraKey,
+                    title=f"Issue {req.jiraKey}",
+                    team="",
+                    action="reassigned"
+                )
+                review_agent.log_agent_communication(
+                    sender="Communication Agent",
+                    receiver=matched_engineer.name,
+                    topic="Task Reassignment Notification",
+                    content=f"Sent reassignment notification for Jira issue {req.jiraKey}."
+                )
+            except Exception as notify_err:
+                print(f"⚠️ Task reassignment notification failed for {req.jiraKey}: {str(notify_err)}")
 
         review_agent.log_agent_communication(
             sender="Execution Agent",
@@ -849,6 +933,28 @@ def get_agent_logs():
     debt_state = review_agent._load_debt_state()
     return debt_state.get("cross_agent_logs", [])
 
+@app.get("/api/communication/manager-digest/preview")
+def preview_manager_digest():
+    """
+    Builds the manager digest payload without sending Slack.
+    """
+    try:
+        inputs = build_manager_digest_inputs()
+        return communication_agent.build_manager_digest(**inputs)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/communication/manager-digest")
+def send_manager_digest():
+    """
+    Sends one summary-level manager digest to the configured Slack manager channel.
+    """
+    try:
+        inputs = build_manager_digest_inputs()
+        return communication_agent.send_manager_digest(**inputs)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/slack/escalate")
 def trigger_stale_escalation():
     """
@@ -1123,6 +1229,30 @@ def approve_planning_dispatch(req: ApprovePlanningRequest):
                 topic="Sprint Dispatch",
                 content=f"Task '{task.title}' created as Jira issue {jira_key} and assigned to {assignee_name}."
             )
+
+            assigned_engineer = find_engineer_by_jira_id(task.assigned_engineer_jira_id)
+            assignee_slack_id = getattr(assigned_engineer, "slack_user_id", "") if assigned_engineer else ""
+            if assignee_slack_id:
+                try:
+                    communication_agent.notify_task_assigned(
+                        assignee_slack_id=assignee_slack_id,
+                        assignee_name=assignee_name,
+                        jira_key=jira_key,
+                        title=task.title,
+                        description=task.description,
+                        team=task.team_label,
+                        moscow=task.moscow_tier,
+                        github_issue_number=github_issue.get("number") if github_issue else None,
+                        action="assigned"
+                    )
+                    review_agent.log_agent_communication(
+                        sender="Communication Agent",
+                        receiver=assignee_name,
+                        topic="Task Assignment Notification",
+                        content=f"Sent sprint dispatch notification for Jira issue {jira_key}."
+                    )
+                except Exception as notify_err:
+                    print(f"⚠️ Sprint dispatch notification failed for {jira_key}: {str(notify_err)}")
             
         success_msg = f"Successfully created {len(req.tasks)} Jira issues!"
         if github_warnings:

@@ -1,4 +1,13 @@
 {
-  "issues": [],
+  "issues": [
+    {
+      "number": 101,
+      "title": "[MOCK-272] Test communication agent task",
+      "body": "**Jira Issue:** [MOCK-272](https://mittalayushh.atlassian.net/browse/MOCK-272)\n\n**Task Description:**\nVerify assignee Slack notification is created.\n\n**Team:** BACKEND\n**MoSCoW Priority:** MUST\n**Assigned To:** Ayush Mittal",
+      "assignee": "roboayushh",
+      "state": "open",
+      "html_url": "https://github.com/https://github.com/mittalayushh/nextauv/issues/101"
+    }
+  ],
   "prs": []
 }

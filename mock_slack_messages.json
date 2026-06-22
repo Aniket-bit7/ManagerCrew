@@ -1082,5 +1082,89 @@
       }
     ],
     "timestamp": 1782070164.774111
+  },
+  {
+    "channel": "U0BC0B21TU1",
+    "text": "Task MOCK-272 was assigned to you: Test communication agent task",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "Task Assignment"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Hi Ayush Mittal, *MOCK-272* was assigned to you.\n*Task:* Test communication agent task\nTeam: BACKEND\nPriority: MUST\nGitHub Issue: #101\n\nVerify assignee Slack notification is created."
+        }
+      }
+    ],
+    "timestamp": 1782096725.620049
+  },
+  {
+    "channel": "U0BC0B21TU1",
+    "text": "Task MOCK-123 was reassigned to you: Issue MOCK-123",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "Task Assignment"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Hi Ayush Mittal, *MOCK-123* was reassigned to you.\n*Task:* Issue MOCK-123"
+        }
+      }
+    ],
+    "timestamp": 1782096800.4564638
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "Engineering Manager Digest: 0 open PR(s), 0 merged PR(s), 0 stale PR(s), 0 manual review(s), 0 active task(s).",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "Engineering Manager Digest"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR Health*\n\u2022 Open: `0`\n\u2022 Merged: `0`\n\u2022 Stale: `0`\n\u2022 Manual review pending: `0`"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Task Load*\n\u2022 Active Jira tasks: `0`\n\u2022 Ayush Mittal (FRONTEND): 0 active task(s)\n\u2022 Ayush Mittal (BACKEND): 0 active task(s)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Attention*\n\u2022 Review queue is active for: Ayush Mittal, Anwesha."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Recent Agent Updates*\n\u2022 Execution Agent \u2192 GitHub: Issue Created\n\u2022 Execution Agent \u2192 GitHub: Issue Created\n\u2022 Execution Agent \u2192 GitHub: Issue Created\n\u2022 Execution Agent \u2192 Jira/GitHub: Issue Assigned\n\u2022 Communication Agent \u2192 Ayush Mittal: Task Reassignment Notification"
+        }
+      }
+    ],
+    "timestamp": 1782105589.420955
   }
 ]
