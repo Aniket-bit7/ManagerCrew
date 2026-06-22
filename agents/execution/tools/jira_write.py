@@ -102,3 +102,147 @@ class JiraConnector:
         response = requests.post(url, json=payload, auth=self.auth, headers=self.headers)
         if response.status_code != 201:
             print(f"⚠️ Warning: Could not create link {outward_key} -> {inward_key}: {response.text}")
+
+    def get_active_issues(self, project_key: str) -> List[dict]:
+        """
+        Fetches all active (non-completed) issues in Jira for the given project key.
+        """
+        if self.mock_mode or not self.base_url:
+            print("[MOCK JIRA] get_active_issues called. Returning empty list.")
+            return []
+
+        url = f"{self.base_url}/rest/api/3/search/jql"
+        jql = f'project = "{project_key}" AND status != "Done"'
+        params = {"jql": jql, "fields": "summary,description,status,assignee,issuetype", "maxResults": 100}
+
+        try:
+            response = requests.get(url, params=params, auth=self.auth, headers=self.headers)
+            if response.status_code == 200:
+                issues = response.json().get("issues", [])
+                result = []
+                for issue in issues:
+                    fields = issue.get("fields", {})
+                    assignee = fields.get("assignee")
+                    result.append({
+                        "key": issue.get("key"),
+                        "summary": fields.get("summary", ""),
+                        "description": self._parse_jira_description(fields.get("description")),
+                        "status": fields.get("status", {}).get("name", "Unknown"),
+                        "assignee_id": assignee.get("accountId") if assignee else None,
+                        "assignee_name": assignee.get("displayName") if assignee else "Unassigned"
+                    })
+                return result
+            else:
+                print(f"⚠️ Failed to fetch active issues: {response.status_code} - {response.text}")
+                return []
+        except Exception as e:
+            print(f"⚠️ Error fetching active issues: {str(e)}")
+            return []
+
+    def get_issue_details(self, issue_key: str) -> Optional[dict]:
+        """
+        Fetches details of a single Jira issue.
+        """
+        if self.mock_mode or not self.base_url:
+            print(f"[MOCK JIRA] get_issue_details called for {issue_key}.")
+            return None
+
+        url = f"{self.base_url}/rest/api/3/issue/{issue_key}"
+        try:
+            response = requests.get(url, auth=self.auth, headers=self.headers)
+            if response.status_code == 200:
+                data = response.json()
+                fields = data.get("fields", {})
+                assignee = fields.get("assignee")
+                return {
+                    "key": data.get("key"),
+                    "summary": fields.get("summary", ""),
+                    "description": self._parse_jira_description(fields.get("description")),
+                    "status": fields.get("status", {}).get("name", "Unknown"),
+                    "assignee_id": assignee.get("accountId") if assignee else None,
+                    "assignee_name": assignee.get("displayName") if assignee else "Unassigned"
+                }
+            else:
+                print(f"⚠️ Failed to get issue details for {issue_key}: {response.status_code}")
+                return None
+        except Exception as e:
+            print(f"⚠️ Error getting issue details: {str(e)}")
+            return None
+
+    def transition_issue(self, issue_key: str, transition_name: str = "Done") -> bool:
+        """
+        Finds the transition ID matching the transition_name and transitions the issue.
+        """
+        if self.mock_mode or not self.base_url:
+            print(f"[MOCK JIRA] Transitioned issue {issue_key} to '{transition_name}' status successfully.")
+            return True
+
+        # 1. Fetch available transitions
+        transitions_url = f"{self.base_url}/rest/api/3/issue/{issue_key}/transitions"
+        try:
+            response = requests.get(transitions_url, auth=self.auth, headers=self.headers)
+            if response.status_code != 200:
+                print(f"⚠️ Failed to fetch transitions for {issue_key}: {response.status_code} - {response.text}")
+                return False
+
+            transitions = response.json().get("transitions", [])
+            transition_id = None
+            for t in transitions:
+                name = t.get("name", "").lower()
+                if transition_name.lower() in name or name in transition_name.lower():
+                    transition_id = t.get("id")
+                    break
+
+            if not transition_id:
+                # Fallback to whatever transition looks like completion or try the first one
+                print(f"⚠️ Could not find a transition matching '{transition_name}'. Available: {[t.get('name') for t in transitions]}")
+                # Let's try to match anything like "Done", "Completed", "Closed", "Finish"
+                for t in transitions:
+                    name = t.get("name", "").lower()
+                    if any(w in name for w in ["done", "complete", "close", "finish", "resolve"]):
+                        transition_id = t.get("id")
+                        transition_name = t.get("name")
+                        break
+
+            if not transition_id:
+                print("⚠️ No valid completion transitions found.")
+                return False
+
+            # 2. Perform the transition
+            payload = {
+                "transition": {
+                    "id": transition_id
+                }
+            }
+            post_response = requests.post(transitions_url, json=payload, auth=self.auth, headers=self.headers)
+            if post_response.status_code in [204, 200, 201]:
+                print(f"✅ Successfully transitioned Jira issue {issue_key} to '{transition_name}'")
+                return True
+            else:
+                print(f"⚠️ Failed to transition issue {issue_key}: {post_response.status_code} - {post_response.text}")
+                return False
+        except Exception as e:
+            print(f"⚠️ Error transitioning issue: {str(e)}")
+            return False
+
+    def _parse_jira_description(self, desc) -> str:
+        """
+        Helper to extract plain text from ADF description.
+        """
+        if not desc:
+            return ""
+        if isinstance(desc, str):
+            return desc
+        try:
+            # Check for ADF format (Atlassian Document Format)
+            if isinstance(desc, dict) and desc.get("type") == "doc":
+                text_parts = []
+                for content in desc.get("content", []):
+                    if content.get("type") == "paragraph":
+                        for c in content.get("content", []):
+                            if c.get("type") == "text":
+                                text_parts.append(c.get("text", ""))
+                return "\n".join(text_parts)
+        except Exception:
+            pass
+        return str(desc)

@@ -1,0 +1,1086 @@
+[
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #201 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #201 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* PR for KAN-18: E2E Live Test Widget UI (Branch code: Feature: Implement React premium button components)\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782036306.7684119
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #201 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #201 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* PR for KAN-19: E2E Live Test Widget UI (Branch code: Feature: Implement React premium button components)\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782036341.420598
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #201 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #201 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* PR for KAN-20: E2E Live Test Widget UI (Branch code: Feature: Implement React premium button components)\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 3/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782036359.40785
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #201 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #201 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* PR for KAN-21: E2E Live Test Widget UI (Branch code: Feature: Implement React premium button components)\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 3/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782036379.143064
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #201 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #201 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* PR for KAN-22: make a button (Branch code: Feature: Implement React premium button components)\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 2/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782038119.113767
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #5 Escalation Alert",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\u23f3 Stale PR Escalation"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udea8 *PR Escalation*: PR #5 ('Implement persistent JSON storage for backend todos') has been open for 52 hours under review by @unassigned. This blocks critical path tasks in the current sprint!"
+        }
+      }
+    ],
+    "timestamp": 1782038220.547703
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #14 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #14 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* adding button\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 2/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782038647.534827
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #6 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #6 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* feat: add inline task editing with save and cancel actions\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782038764.305862
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #5 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #5 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* Implement persistent JSON storage for backend todos\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 3/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +5.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `MEDIUM`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* FAIL"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782038815.517301
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #5 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #5 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* Implement persistent JSON storage for backend todos\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782038856.050931
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #6 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #6 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* feat: add inline task editing with save and cancel actions\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `YES`\n*Fulfillment Reasoning:* The code implements inline editing of tasks with save and cancel buttons, which matches the manager's requirements and task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782044002.6533608
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #6 review scorecard ready. Recommendation: REJECT",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #6 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* feat: add inline task editing with save and cancel actions\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `NO`\n*Fulfillment Reasoning:* The manager's requirements specified creating a database schema and running migration scripts to add PostgreSQL tables, but the provided code only implements inline task editing in the frontend."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782044005.5639338
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #6 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #6 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* feat: add inline task editing with save and cancel actions\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 3/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `MEDIUM`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* FAIL"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `YES`\n*Fulfillment Reasoning:* Assumed meeting manager requirements in rule-based fallback."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 2 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782044393.2123709
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #6 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #6 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* feat: add inline task editing with save and cancel actions\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `YES`\n*Fulfillment Reasoning:* The code implements the required inline task editing feature with save and cancel actions, matching the task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 4 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782047338.889915
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udc64 PR #6 *'feat: add inline task editing with save and cancel actions'* requires *manual human review*.",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udc64 Manual Review Required"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR #6:* feat: add inline task editing with save and cancel actions\n\nThe AI review agent flagged this PR for mandatory human review due to complexity, security concerns, or unfulfilled requirements."
+        }
+      }
+    ],
+    "timestamp": 1782047340.1450381
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udd0d *Manual Code Review Requested* \u2014 PR #6\nTitle: *feat: add inline task editing with save and cancel actions*",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0d Human Code Review Required",
+          "emoji": true
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "The AI Review Agent has flagged *PR #6* for mandatory human review.\n*PR:* <https://github.com/Aniket-bit7/todo-app/pull/6|feat: add inline task editing with save and cancel actions>\n*Jira Issue:* `ISSUE-2`\n*PR Author:* @unknown"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\ud83d\udcca Scorecard Summary:*\n\u2022 Complexity: `6/10`\n\u2022 Security Risk: `LOW`\n\u2022 Conventions: `PASS`\n\u2022 Requirements Met: `YES`"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\u26a0\ufe0f Issues Found:*\n\u2022 General quality concerns flagged by the AI agent."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_Please review the code, give feedback to the developer, and ask them to raise a new PR once the issues are resolved. The Review Agent will automatically re-audit the next PR._"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "actions",
+        "elements": [
+          {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "\ud83d\udcc2 View PR on GitHub"
+            },
+            "url": "https://github.com/Aniket-bit7/todo-app/pull/6"
+          }
+        ]
+      }
+    ],
+    "timestamp": 1782047341.130305
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #16 review scorecard ready. Recommendation: APPROVE",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #16 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* button\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 1/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `YES`\n*Fulfillment Reasoning:* The change appears to be a minor update to a button's hover effect, which matches the PR title 'button'."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Ayush Mittal (ayush-mittal)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 4 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udfe2 *Action:* Low Risk & Complexity. Bypassing human review for *Auto-Merge*."
+        }
+      }
+    ],
+    "timestamp": 1782048597.5680451
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83c\udf89 Your PR #16 *'button'* has been *merged successfully*! Great work!",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\u2705 PR Merged Successfully"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR #16:* button\n\n\ud83c\udf89 Your code has been reviewed, approved, and merged into the main branch."
+        }
+      }
+    ],
+    "timestamp": 1782048600.2796931
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "PR #47 review scorecard ready. Recommendation: MANUAL_REVIEW",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0e Review Agent Alert: PR #47 Raised"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Title:* deletion button\n*Repository:* `Aniket-bit7/todo-app`"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Complexity:* 6/10"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Coverage Delta:* +0.0%"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Security Risk:* `LOW`"
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Conventions:* PASS"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Requirements Met:* `NO`\n*Fulfillment Reasoning:* The manager's requirement was to create a feature for deleting existing tasks, but the provided code introduces a 'Clear Completed' button instead of a general deletion feature, which does not fully satisfy the specified task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*Assigned Reviewer:* @Anwesha (aaneesa)\n*Reason:* assigned due to capacity bottleneck (all other engineers are at or above WIP limit, chosen because workload 14 is lowest)"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "\ud83d\udd34 *Action:* Security concern or conventions issue. *Mandatory Human Review Required*."
+        }
+      }
+    ],
+    "timestamp": 1782070162.949306
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udc64 PR #47 *'deletion button'* requires *manual human review*.",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udc64 Manual Review Required"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*PR #47:* deletion button\n\nThe AI review agent flagged this PR for mandatory human review due to complexity, security concerns, or unfulfilled requirements."
+        }
+      }
+    ],
+    "timestamp": 1782070163.585424
+  },
+  {
+    "channel": "#engineering-manager",
+    "text": "\ud83d\udd0d *Manual Code Review Requested* \u2014 PR #47\nTitle: *deletion button*",
+    "blocks": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain_text",
+          "text": "\ud83d\udd0d Human Code Review Required",
+          "emoji": true
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "The AI Review Agent has flagged *PR #47* for mandatory human review.\n*PR:* <https://github.com/Aniket-bit7/todo-app/pull/47|deletion button>\n*Jira Issue:* `KAN-92`\n*PR Author:* @unknown"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\ud83d\udcca Scorecard Summary:*\n\u2022 Complexity: `6/10`\n\u2022 Security Risk: `LOW`\n\u2022 Conventions: `PASS`\n\u2022 Requirements Met: `NO`"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*\u26a0\ufe0f Issues Found:*\n\u2022 *Requirements Not Met:* The manager's requirement was to create a feature for deleting existing tasks, but the provided code introduces a 'Clear Completed' button instead of a general deletion feature, which does not fully satisfy the specified task description."
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "_Please review the code, give feedback to the developer, and ask them to raise a new PR once the issues are resolved. The Review Agent will automatically re-audit the next PR._"
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "actions",
+        "elements": [
+          {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "\ud83d\udcc2 View PR on GitHub"
+            },
+            "url": "https://github.com/Aniket-bit7/todo-app/pull/47"
+          }
+        ]
+      }
+    ],
+    "timestamp": 1782070164.774111
+  }
+]

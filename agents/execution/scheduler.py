@@ -37,9 +37,15 @@ class CapacityScheduler:
             # Fallback if a team isn't explicitly configured in your YAML
             if target_team_name not in team_map:
                 print(f"⚠️ Team {target_team_name} missing from YAML config. Falling back to first available team.")
-                target_team_name = self.config.teams[0].name.upper()
+                if self.config.teams:
+                    target_team_name = self.config.teams[0].name.upper()
+                else:
+                    print("⚠️ No teams configured in team_config.yaml! Cannot assign engineer.")
+                    continue
 
-            team_info = team_map[target_team_name]
+            team_info = team_map.get(target_team_name)
+            if not team_info:
+                continue
             engineers = team_info.engineers
             
             assigned_engineer = None

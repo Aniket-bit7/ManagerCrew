@@ -28,7 +28,7 @@ class WIPMonitor:
 
         # ✅ FIX: Wrap project_key in strict quotes for correct JQL parsing
         jql = f'project = "{project_key}" AND status IN ("In Progress", "To Do") AND assignee IS NOT EMPTY'
-        url = f"{self.base_url}/rest/api/3/search"
+        url = f"{self.base_url}/rest/api/3/search/jql"
         params = {"jql": jql, "fields": "assignee", "maxResults": 100}
 
         try:

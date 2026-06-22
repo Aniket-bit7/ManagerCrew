@@ -1,15 +1,28 @@
-wip_limit: 1                    # Strict capacity: 1 ticket max per engineer
-sprint_duration_days: 20
-jira_project_key: "KAN"         # Swap this out with your exact live Jira project key
-confidence_threshold: 0.60
-
+confidence_threshold: 0.6
+jira_project_key: KAN
+sprint_duration_days: 14
 teams:
-  - name: "FRONTEND"
-    slack_channel: ""           # Empty string since we are skipping Slack for now
-    engineers:
-      - name: "Aniket Pathak"
-        jira_account_id: "712020:c8455f75-d3f1-4ed0-8a3f-e724935eaee7"
-        slack_user_id: ""
-      - name: "Ayush Mittal"
-        jira_account_id: "712020:856bc8f8-1e57-4b4b-8fef-dfff217ae341"
-        slack_user_id: ""
+- engineers:
+  - github_username: Aniket-bit7
+    is_team_lead: false
+    jira_account_id: 712020:c8455f75-d3f1-4ed0-8a3f-e724935eaee7
+    name: Aniket Pathak
+    slack_user_id: ''
+  name: BACKEND
+  slack_channel: backend-alerts
+  team_lead_slack_id: U_TEST_LEAD_123
+- engineers:
+  - github_username: ayush-mittal
+    is_team_lead: false
+    jira_account_id: 712020:856bc8f8-1e57-4b4b-8fef-dfff217ae341
+    name: Ayush Mittal
+    slack_user_id: ''
+  - github_username: aaneesa
+    is_team_lead: false
+    jira_account_id: 712020:98f75e17-9f36-4925-97ad-917b733ac3b7
+    name: Anwesha
+    slack_user_id: ''
+  name: FRONTEND
+  slack_channel: frontend-alerts
+  team_lead_slack_id: U_TEST_LEAD_123
+wip_limit: 1
